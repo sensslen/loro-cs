@@ -399,3 +399,32 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Rust
+/loro-cs/target/
+**/*.rs.bk
+Cargo.lock
+Cargo.toml.orig
+**/*.dSYM/
+**/*.rlib
+**/*.rmeta
+**/*.fingerprint
+**/*.profraw
+**/*.profdata
+**/*.gcda
+**/*.gcno
+**/*.gcov
+**/*.ll
+**/*.bc
+**/*.o
+**/*.so
+**/*.dylib
+**/*.dll
+**/*.exe
+**/*.pdb
+**/*.log
+**/*.out
+**/*.tmp
+**/*.swp
+**/.cargo/
+**/.rustup/

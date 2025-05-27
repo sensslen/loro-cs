@@ -1,0 +1,168 @@
+name: Build and Release LoroCs
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-matrix:
+    name: Build Rust DLLs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          # Windows
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+          - os: windows-latest
+            target: i686-pc-windows-msvc
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+          # Linux
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: i686-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+          # MacOS
+          - os: macos-latest
+            target: x86_64-apple-darwin
+          - os: macos-latest
+            target: aarch64-apple-darwin
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install 32-bit dependencies (Linux only)
+        if: runner.os == 'Linux' && contains(matrix.target, 'i686')
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y gcc-multilib g++-multilib libc6:i386 libgcc-s1:i386 libstdc++6:i386
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      - name: Install aarch64 cross toolchain (Linux only)
+        if: runner.os == 'Linux' && matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+      - name: Set up cargo config for aarch64 linker (Linux only)
+        if: runner.os == 'Linux' && matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          mkdir -p loro-cs/.cargo
+          echo "[target.aarch64-unknown-linux-gnu]" > loro-cs/.cargo/config.toml
+          echo "linker = \"aarch64-linux-gnu-gcc\"" >> loro-cs/.cargo/config.toml
+      - name: Add target
+        run: rustup target add ${{ matrix.target }}
+      - name: build native dependency
+        run: |
+          cd loro-cs
+          cargo build --release --target ${{ matrix.target }}
+      - name: List files in target directory
+        shell: bash
+        run: |
+          echo "Renaming libloro_cs.* to loro_cs.* in loro-cs/target/${{ matrix.target }}/release"
+          shopt -s nullglob
+          for f in loro-cs/target/${{ matrix.target }}/release/libloro_cs.*; do
+            newname="loro-cs/target/${{ matrix.target }}/release/$(basename "$f" | sed 's/^lib//')"
+            mv "$f" "$newname"
+            echo "Renamed $f to $newname"
+          done
+          echo "Listing files in loro-cs/target:"
+          ls -R loro-cs/target || true
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: loro-cs-${{ matrix.target }}
+          path: |
+            loro-cs/target/${{ matrix.target }}/release/loro_cs.dll
+            loro-cs/target/${{ matrix.target }}/release/loro_cs.so
+            loro-cs/target/${{ matrix.target }}/release/loro_cs.dylib
+          if-no-files-found: error
+
+  pack-nuget:
+    name: Pack NuGet
+    needs: build-matrix
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: nowsprinting/check-version-format-action@v3
+        id: version
+        with:
+          prefix: 'v'
+      - name: Copy DLLs to NuGet structure
+        shell: bash
+        run: |
+          mkdir -p LoroCs/runtimes/win-x64/native
+          mkdir -p LoroCs/runtimes/win-x86/native
+          mkdir -p LoroCs/runtimes/win-arm64/native
+          mkdir -p LoroCs/runtimes/linux-x64/native
+          mkdir -p LoroCs/runtimes/linux-x86/native
+          mkdir -p LoroCs/runtimes/linux-arm64/native
+          mkdir -p LoroCs/runtimes/osx-x64/native
+          mkdir -p LoroCs/runtimes/osx-arm64/native
+
+          cp artifacts/loro-cs-x86_64-pc-windows-msvc/loro_cs.dll LoroCs/runtimes/win-x64/native/ || true
+          cp artifacts/loro-cs-i686-pc-windows-msvc/loro_cs.dll LoroCs/runtimes/win-x86/native/ || true
+          cp artifacts/loro-cs-aarch64-pc-windows-msvc/loro_cs.dll LoroCs/runtimes/win-arm64/native/ || true
+
+          cp artifacts/loro-cs-x86_64-unknown-linux-gnu/loro_cs.so LoroCs/runtimes/linux-x64/native/ || true
+          cp artifacts/loro-cs-i686-unknown-linux-gnu/loro_cs.so LoroCs/runtimes/linux-x86/native/ || true
+          cp artifacts/loro-cs-aarch64-unknown-linux-gnu/loro_cs.so LoroCs/runtimes/linux-arm64/native/ || true
+
+          cp artifacts/loro-cs-x86_64-apple-darwin/loro_cs.dylib LoroCs/runtimes/osx-x64/native/ || true
+          cp artifacts/loro-cs-aarch64-apple-darwin/loro_cs.dylib LoroCs/runtimes/osx-arm64/native/ || true
+      - name: build
+        run: |
+          dotnet publish LoroCs/LoroCs/LoroCs.csproj -c Release -p:Version=${{ steps.version.outputs.full_without_prefix }}
+      - name: Pack NuGet
+        run: |
+          dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ steps.version.outputs.full_without_prefix }}
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: out/*.nupkg
+
+  release:
+    name: Release
+    needs: pack-nuget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download NuGet package
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-package
+          path: out
+      - name: Zip artifacts
+        uses: thedoctor0/zip-release@0.7.6
+        with:
+          type: 'zip'
+          filename: 'release.zip'
+          path: out
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          fail_on_unmatched_files: true
+          files: |
+            release.zip
+      - name: publish nuget package to nuget.org
+        id: publish_nuget
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem -Path out/* -Include *.nupkg -Recurse
+          foreach ($f in $files){
+            $fullPath = $F.FullName
+            echo "sending $fullPath"
+            dotnet nuget push "$fullPath" -s 'https://api.nuget.org/v3/index.json' -k ${{ secrets.NUGET_KEY }} --skip-duplicate
+          }

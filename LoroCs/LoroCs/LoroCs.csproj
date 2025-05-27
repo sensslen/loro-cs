@@ -53,4 +53,42 @@
     </ItemGroup>
   </Target>
 
+  <PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageId>LoroCs</PackageId>
+    <Version>0.1.0</Version>
+    <Authors>Simon Ensslen;RenewedVision</Authors>
+    <Description>LoroCs .NET bindings with native loro_cs.dll from Rust</Description>
+    <IncludeSymbols>true</IncludeSymbols>
+    <IncludeSource>true</IncludeSource>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/sensslen/loro-cs</RepositoryUrl>
+    <PackageTags>Loro</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+
+  <!-- Include native dependencies when available (these are built by the CI pipeline) -->
+  <ItemGroup>
+    <!-- Windows -->
+    <None Include="..\..\artifacts\loro_cs-win-x64-windows-latest\loro_cs.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Condition="Exists('..\..\artifacts\loro_cs-win-x64-windows-latest\loro_cs.dll')" />
+    <None Include="..\..\artifacts\loro_cs-win-x86-windows-latest\loro_cs.dll" Pack="true" PackagePath="runtimes/win-x86/native/" Condition="Exists('..\..\artifacts\loro_cs-win-x86-windows-latest\loro_cs.dll')" />
+    <None Include="..\..\artifacts\loro_cs-win-arm64-windows-latest\loro_cs.dll" Pack="true" PackagePath="runtimes/win-arm64/native/" Condition="Exists('..\..\artifacts\loro_cs-win-arm64-windows-latest\loro_cs.dll')" />
+    <!-- Linux -->
+    <None Include="..\..\artifacts\loro_cs-linux-x64-ubuntu-latest\loro_cs.so" Pack="true" PackagePath="runtimes/linux-x64/native/" Condition="Exists('..\..\artifacts\loro_cs-linux-x64-ubuntu-latest\loro_cs.so')" />
+    <None Include="..\..\artifacts\loro_cs-linux-x86-ubuntu-latest\loro_cs.so" Pack="true" PackagePath="runtimes/linux-x86/native/" Condition="Exists('..\..\artifacts\loro_cs-linux-x86-ubuntu-latest\loro_cs.so')" />
+    <None Include="..\..\artifacts\loro_cs-linux-arm64-ubuntu-latest\loro_cs.so" Pack="true" PackagePath="runtimes/linux-arm64/native/" Condition="Exists('..\..\artifacts\loro_cs-linux-arm64-ubuntu-latest\loro_cs.so')" />
+    <!-- macOS -->
+    <None Include="..\..\artifacts\loro_cs-osx-x64-macos-latest\loro_cs.dylib" Pack="true" PackagePath="runtimes/osx-x64/native/" Condition="Exists('..\..\artifacts\loro_cs-osx-x64-macos-latest\loro_cs.dylib')" />
+    <None Include="..\..\artifacts\loro_cs-osx-arm64-macos-latest\loro_cs.dylib" Pack="true" PackagePath="runtimes/osx-arm64/native/" Condition="Exists('..\..\artifacts\loro_cs-osx-arm64-macos-latest\loro_cs.dylib')" />
+  </ItemGroup>  
+  
+  <ItemGroup>
+    <Content Include="..\..\README.md">
+      <Pack>true</Pack>
+      <PackagePath>README.md</PackagePath>
+    </Content>
+  </ItemGroup>
+
 </Project>
