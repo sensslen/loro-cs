@@ -72,16 +72,16 @@
   <!-- Include native dependencies when available (these are built by the CI pipeline) -->
   <ItemGroup>
     <!-- Windows -->
-    <None Include="..\..\artifacts\loro_cs-win-x64\loro_cs.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Condition="Exists('..\..\artifacts\loro_cs-win-x64\loro_cs.dll')" />
-    <None Include="..\..\artifacts\loro_cs-win-x86\loro_cs.dll" Pack="true" PackagePath="runtimes/win-x86/native/" Condition="Exists('..\..\artifacts\loro_cs-win-x86\loro_cs.dll')" />
-    <None Include="..\..\artifacts\loro_cs-win-arm64\loro_cs.dll" Pack="true" PackagePath="runtimes/win-arm64/native/" Condition="Exists('..\..\artifacts\loro_cs-win-arm64\loro_cs.dll')" />
+    <None Include="..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro_cs.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro_cs.dll')" />
+    <None Include="..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro_cs.dll" Pack="true" PackagePath="runtimes/win-x86/native/" Condition="Exists('..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro_cs.dll')" />
+    <None Include="..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro_cs.dll" Pack="true" PackagePath="runtimes/win-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro_cs.dll')" />
     <!-- Linux -->
-    <None Include="..\..\artifacts\loro_cs-linux-x64\loro_cs.so" Pack="true" PackagePath="runtimes/linux-x64/native/" Condition="Exists('..\..\artifacts\loro_cs-linux-x64\loro_cs.so')" />
-    <None Include="..\..\artifacts\loro_cs-linux-x86\loro_cs.so" Pack="true" PackagePath="runtimes/linux-x86/native/" Condition="Exists('..\..\artifacts\loro_cs-linux-x86\loro_cs.so')" />
-    <None Include="..\..\artifacts\loro_cs-linux-arm64\loro_cs.so" Pack="true" PackagePath="runtimes/linux-arm64/native/" Condition="Exists('..\..\artifacts\loro_cs-linux-arm64\loro_cs.so')" />
+    <None Include="..\..\artifacts\loro-cs-x86_64-unknown-linux-gnu\loro_cs.so" Pack="true" PackagePath="runtimes/linux-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-unknown-linux-gnu\loro_cs.so')" />
+    <None Include="..\..\artifacts\loro-cs-i686-unknown-linux-gnu\loro_cs.so" Pack="true" PackagePath="runtimes/linux-x86/native/" Condition="Exists('..\..\artifacts\loro-cs-i686-unknown-linux-gnu\loro_cs.so')" />
+    <None Include="..\..\artifacts\loro-cs-aarch64-unknown-linux-gnu\loro_cs.so" Pack="true" PackagePath="runtimes/linux-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-unknown-linux-gnu\loro_cs.so')" />
     <!-- macOS -->
-    <None Include="..\..\artifacts\loro_cs-osx-x64\loro_cs.dylib" Pack="true" PackagePath="runtimes/osx-x64/native/" Condition="Exists('..\..\artifacts\loro_cs-osx-x64\loro_cs.dylib')" />
-    <None Include="..\..\artifacts\loro_cs-osx-arm64\loro_cs.dylib" Pack="true" PackagePath="runtimes/osx-arm64/native/" Condition="Exists('..\..\artifacts\loro_cs-osx-arm64\loro_cs.dylib')" />
+    <None Include="..\..\artifacts\loro-cs-x86_64-apple-darwin\loro_cs.dylib" Pack="true" PackagePath="runtimes/osx-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-apple-darwin\loro_cs.dylib')" />
+    <None Include="..\..\artifacts\loro-cs-aarch64-apple-darwin\loro_cs.dylib" Pack="true" PackagePath="runtimes/osx-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-apple-darwin\loro_cs.dylib')" />
   </ItemGroup>  
   
   <ItemGroup>

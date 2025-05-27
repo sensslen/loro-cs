@@ -94,12 +94,6 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - name: list artifacts
-        shell: bash
-        run: |
-          echo "Listing all artifacts in the 'artifacts' directory:"
-          ls -R artifacts
-          exit 1 # Fail the job to see the output in the logs
       - uses: nowsprinting/check-version-format-action@v3
         id: version
         with:
