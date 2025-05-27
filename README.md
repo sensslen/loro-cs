@@ -41,7 +41,7 @@ The native library is built using Rust and UniFFI. To build native artifacts and
 ```powershell
 pushd .\loro-cs
 cargo build --release
-Copy-Item .\target\release\loro_cs.dll ..\LoroCs\LoroCs\..\..\artifacts\loro_cs-win-x64-windows-latest\loro_cs.dll -Force
+Copy-Item .\target\release\loro_cs.dll ..\LoroCs\LoroCs\..\..\artifacts\loro_cs-win-x64\loro_cs.dll -Force
 ```
 
 #### Linux (bash/x64)
@@ -49,7 +49,7 @@ Copy-Item .\target\release\loro_cs.dll ..\LoroCs\LoroCs\..\..\artifacts\loro_cs-
 pushd ./loro-cs
 cargo build --release
 mkdir -p ../../artifacts/loro_cs-linux-x64-ubuntu-latest
-cp ./target/release/loro_cs.so ../../artifacts/loro_cs-linux-x64-ubuntu-latest/loro_cs.so
+cp ./target/release/loro_cs.so ../../artifacts/loro_cs-linux-x64/loro_cs.so
 ```
 
 #### macOS (bash/arm64)
@@ -57,7 +57,7 @@ cp ./target/release/loro_cs.so ../../artifacts/loro_cs-linux-x64-ubuntu-latest/l
 pushd ./loro-cs
 cargo build --release
 mkdir -p ../../artifacts/loro_cs-osx-arm64-macos-latest
-cp ./target/release/loro_cs.dylib ../../artifacts/loro_cs-osx-arm64-macos-latest/loro_cs.dylib
+cp ./target/release/loro_cs.dylib ../../artifacts/loro_cs-osx-arm64/loro_cs.dylib
 ```
 
 ### C# Project
