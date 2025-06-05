@@ -601,9 +601,9 @@ dependencies = [
 
 [[package]]
 name = "loro"
-version = "1.5.6"
+version = "1.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dc6d610e2f9258f8691d5280eb60c900abd480964d36bd0e21422a5fad0bef63"
+checksum = "a861e6a012edc8deb08a8d09c4d9eb78e5523011f2f2ab7bf878bcacd8debbfd"
 dependencies = [
  "enum-as-inner 0.6.1",
  "fxhash",
@@ -617,9 +617,9 @@ dependencies = [
 
 [[package]]
 name = "loro-common"
-version = "1.5.6"
+version = "1.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "308800501e7f4c53db20eedfd2d0c2c78d79adfbf1e68d67b5c8bacae4a6a81b"
+checksum = "b0b84787030d7925d43f125841d3ce7e4850ffac80d2687cdaa9fd571e67129b"
 dependencies = [
  "arbitrary",
  "enum-as-inner 0.6.1",
@@ -635,7 +635,7 @@ dependencies = [
 
 [[package]]
 name = "loro-cs"
-version = "1.5.0"
+version = "1.5.8"
 dependencies = [
  "loro-ffi",
  "uniffi",
@@ -655,9 +655,9 @@ dependencies = [
 
 [[package]]
 name = "loro-ffi"
-version = "1.5.6"
+version = "1.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89c1cf8d3f594b1f917362a65d2be434e6f9e3aca8b25a88bed074848edafc66"
+checksum = "aa4964187ec4d1eb50da5f0a6b162689834d5d2f9f9bcd6c0941f20791d6d442"
 dependencies = [
  "loro",
  "serde_json",
@@ -665,9 +665,9 @@ dependencies = [
 
 [[package]]
 name = "loro-internal"
-version = "1.5.6"
+version = "1.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7d917188bdfa110a3aae3b21adf7088ca8285c62b1cd84be16b790b88ec542cd"
+checksum = "1467b6b499e3d41909cbf524a5000bcbbc21af1205d2ee20290bed140395124b"
 dependencies = [
  "append-only-bytes",
  "arref",
@@ -709,9 +709,9 @@ dependencies = [
 
 [[package]]
 name = "loro-kv-store"
-version = "1.5.6"
+version = "1.5.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2fbdbbda1c89efbe3c090798da234b281277543e2dcfd4431d8a206939172686"
+checksum = "fa1e5fe58c0245e62775784b6ac69cbe04a081f3348ec3b9742ecc7901085c18"
 dependencies = [
  "bytes",
  "ensure-cov",
