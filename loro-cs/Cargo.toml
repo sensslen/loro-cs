@@ -9,7 +9,7 @@ name = "loro_cs"
 
 [dependencies]
 loro-ffi = "1.5.8"
-uniffi = "0.28.3"
+uniffi = "0.29.0"
 
 [build-dependencies]
-uniffi = { version = "0.28.3", features = ["build"] }
+uniffi = { version = "0.29.0", features = ["build"] }
