@@ -45,6 +45,7 @@ jobs:
           toolchain: stable
           target: ${{ matrix.target }}
           override: true
+          cache: false
       - name: Install aarch64 cross toolchain (Linux only)
         if: runner.os == 'Linux' && matrix.target == 'aarch64-unknown-linux-gnu'
         run: |
