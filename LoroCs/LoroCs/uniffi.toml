@@ -1,0 +1,3 @@
+[bindings.csharp]
+namespace = "LoroCs"
+access_modifier = "public"

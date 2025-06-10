@@ -13,7 +13,3 @@ uniffi = "0.28.3"
 
 [build-dependencies]
 uniffi = { version = "0.28.3", features = ["build"] }
-
-[bindings.csharp]
-namespace = "LoroCs"
-access_modifier = "public"
