@@ -2,8 +2,8 @@ name: Build and Release LoroCs
 
 on:
   push:
-    tags:
-      - "v*"
+    branches:
+      - main
 
 jobs:
   build-matrix:
@@ -66,9 +66,9 @@ jobs:
       - name: List files in target directory
         shell: bash
         run: |
-          echo "Renaming libloro_cs.* to loro_cs.* in loro-cs/target/${{ matrix.target }}/release"
+          echo "Renaming libloro.* to loro.* in loro-cs/target/${{ matrix.target }}/release"
           shopt -s nullglob
-          for f in loro-cs/target/${{ matrix.target }}/release/libloro_cs.*; do
+          for f in loro-cs/target/${{ matrix.target }}/release/libloro.*; do
             newname="loro-cs/target/${{ matrix.target }}/release/$(basename "$f" | sed 's/^lib//')"
             mv "$f" "$newname"
             echo "Renamed $f to $newname"
@@ -80,9 +80,10 @@ jobs:
         with:
           name: loro-cs-${{ matrix.target }}
           path: |
-            loro-cs/target/${{ matrix.target }}/release/loro_cs.dll
-            loro-cs/target/${{ matrix.target }}/release/loro_cs.so
-            loro-cs/target/${{ matrix.target }}/release/loro_cs.dylib
+            loro-cs/target/${{ matrix.target }}/release/loro.dll
+            loro-cs/target/${{ matrix.target }}/release/loro.pdb
+            loro-cs/target/${{ matrix.target }}/release/loro.so
+            loro-cs/target/${{ matrix.target }}/release/loro.dylib
           if-no-files-found: error
 
   pack-nuget:
@@ -105,23 +106,6 @@ jobs:
       - name: Pack NuGet
         run: |
           dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ steps.version.outputs.full_without_prefix }}
-      - name: Upload NuGet package
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-package
-          path: out/*.nupkg
-
-  release:
-    name: Release
-    needs: pack-nuget
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Download NuGet package
-        uses: actions/download-artifact@v4
-        with:
-          name: nuget-package
-          path: out
       - name: Zip artifacts
         uses: thedoctor0/zip-release@0.7.6
         with:
@@ -132,6 +116,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
+          prerelease: ${{ steps.version.outputs.is_stable == false }}
           fail_on_unmatched_files: true
           files: |
             release.zip

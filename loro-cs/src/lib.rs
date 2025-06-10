@@ -1,5 +1,1 @@
-#![allow(clippy::all)]
-
-use loro_ffi::*;
-
-uniffi::include_scaffolding!("loro");
+loro_ffi::uniffi_reexport_scaffolding!();

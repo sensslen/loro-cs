@@ -1,14 +1,14 @@
 [package]
-name = "loro-cs"
+name = "loro"
 version = "1.5.8"
 edition = "2021"
 
 [lib]
 crate-type = ["dylib"]
-name = "loro_cs"
+name = "loro"
 
 [dependencies]
-loro-ffi = "1.5.8"
+loro-ffi = { git = "https://github.com/sensslen/loro-ffi.git", rev = "fdb33599e251303e6c9d22ba157113e5ea5b741d" }
 uniffi = "0.28.3"
 
 [build-dependencies]
