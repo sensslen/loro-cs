@@ -92,6 +92,8 @@ jobs:
     name: Pack and publish to NuGet
     needs: build-matrix
     runs-on: ubuntu-latest
+    outputs:
+      is_beta_version: ${{ steps.version.outputs.is_stable != 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -107,12 +109,11 @@ jobs:
 
       - name: Generate beta version if no tag version found
         id: gen_beta_version
-        if: steps.tag_version.outputs.full_without_prefix == ''
+        if: ${{ steps.tag_version.outputs.is_valid != 'true' }}
         uses: paulhatch/semantic-version@v5.4.0
         with:
           tag_prefix: "v"
           version_format: "${major}.${minor}.${patch}-alpha.${increment}"
-          bump_each_commit: true
 
       - name: Set version output
         id: version
@@ -157,6 +158,7 @@ jobs:
         with:
           generate_release_notes: true
           fail_on_unmatched_files: true
+          prerelease: ${{ needs.pack-nuget.outputs.is_beta_version }}
           files: |
             release.zip
       - name: publish nuget package to nuget.org
