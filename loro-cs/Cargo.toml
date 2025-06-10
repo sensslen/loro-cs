@@ -9,10 +9,10 @@ name = "loro"
 
 [dependencies]
 loro-ffi = { git = "https://github.com/sensslen/loro-ffi.git", rev = "fdb33599e251303e6c9d22ba157113e5ea5b741d" }
-uniffi = "0.28.3"
+uniffi = "0.29.0"
 
 [build-dependencies]
-uniffi = { version = "0.28.3", features = ["build"] }
+uniffi = { version = "0.29.0", features = ["build"] }
 
 [bindings.csharp]
 namespace = "LoroCs"
