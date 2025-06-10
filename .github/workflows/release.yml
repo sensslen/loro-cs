@@ -87,7 +87,7 @@ jobs:
           if-no-files-found: error
 
   pack-nuget:
-    name: Pack NuGet
+    name: Pack and publish to NuGet
     needs: build-matrix
     runs-on: ubuntu-latest
     steps:
