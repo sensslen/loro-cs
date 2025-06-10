@@ -91,7 +91,6 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>LoroCs</PackageId>
     <Version>0.1.0</Version>
-    <NuGetVersion Condition="'$(NuGetVersion)' == ''">$(Version)</NuGetVersion>
     <Authors>Simon Ensslen;RenewedVision</Authors>
     <Description>LoroCs .NET bindings with native loro_cs.dll from Rust</Description>
     <IncludeSymbols>true</IncludeSymbols>

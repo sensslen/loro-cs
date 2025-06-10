@@ -98,16 +98,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - uses: nowsprinting/check-version-format-action@v3
+      - uses: paulhatch/semantic-version@v5.4.0
         id: version
         with:
-          prefix: 'v'
+          tag_prefix: 'v'
+          version_format: "${major}.${minor}.${patch}-beta.${increment}"
       - name: build
         run: |
-          dotnet publish LoroCs/LoroCs/LoroCs.csproj -c Release -p:Version=${{ steps.version.outputs.full_without_prefix }}
+          dotnet publish LoroCs/LoroCs/LoroCs.csproj -c Release -p:Version=${{ steps.version.outputs.version  }}
       - name: Pack NuGet
         run: |
-          dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ steps.version.outputs.full_without_prefix }}
+          dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ steps.version.outputs.version  }}
       - name: Zip artifacts
         uses: thedoctor0/zip-release@0.7.6
         with:
@@ -119,7 +120,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         with:
           generate_release_notes: true
-          prerelease: ${{ steps.version.outputs.is_stable == false }}
+          prerelease: ${{ steps.version.outputs.is_tagged == false }}
           fail_on_unmatched_files: true
           files: |
             release.zip
