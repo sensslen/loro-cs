@@ -51,7 +51,33 @@
     <Message Condition="'$(UniffiInstalled)' == '0'" Text="uniffi-bindgen-cs is already installed in the correct version - no need to install" />
     <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo install --git https://github.com/NordSecurity/uniffi-bindgen-cs --tag v0.9.1+v0.28.3" />
 
-    <Exec Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format --library ../../loro/target/$(RustBuildConfiguration)/loro.dll" />
+    <!-- Run uniffi-bindgen-cs with the correct library for each OS and architecture -->
+    <!-- Windows x64 -->
+    <Exec Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' And '$(Platform)' == 'x64' And Exists('..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro.dll') "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-x86_64-pc-windows-msvc/loro.dll --library" />
+    <!-- Windows x86 -->
+    <Exec Condition=" ''$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' And ('$(Platform)' == 'x86' Or '$(Platform)' == 'Win32') And Exists('..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro.dll') "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-i686-pc-windows-msvc/loro.dll --library" />
+    <!-- Windows ARM64 -->
+    <Exec Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Windows)))' And '$(Platform)' == 'ARM64' And Exists('..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro.dll') "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-aarch64-pc-windows-msvc/loro.dll --library" />
+
+    <!-- Linux x64 -->
+    <Exec Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' And '$(Platform)' == 'x64' And Exists('..\..\artifacts\loro-cs-x86_64-unknown-linux-gnu\loro.so') "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-x86_64-unknown-linux-gnu/loro.so --library" />
+    <!-- Linux x86 -->
+    <Exec Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' And ('$(Platform)' == 'x86' Or '$(Platform)' == 'Win32') And Exists('..\..\artifacts\loro-cs-i686-unknown-linux-gnu\loro.so') "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-i686-unknown-linux-gnu/loro.so --library" />
+    <!-- Linux ARM64 -->
+    <Exec Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))' And '$(Platform)' == 'ARM64' And Exists('..\..\artifacts\loro-cs-aarch64-unknown-linux-gnu\loro.so') "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-aarch64-unknown-linux-gnu/loro.so --library" />
+
+    <!-- macOS x64 -->
+    <Exec Condition=" ''$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' And '$(Platform)' == 'x64' And Exists('..\..\artifacts\loro-cs-x86_64-apple-darwin\loro.dylib') And '$(RuntimeIdentifier)' == 'osx-x64' "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-x86_64-apple-darwin/loro.dylib --library" />
+    <!-- macOS ARM64 -->
+    <Exec Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::OSX)))' And '$(Platform)' == 'ARM64' And Exists('..\..\artifacts\loro-cs-aarch64-apple-darwin\loro.dylib') And '$(RuntimeIdentifier)' == 'osx-arm64' "
+      Command="uniffi-bindgen-cs -o $(IntermediateOutputPath)/loro --no-format ../../artifacts/loro-cs-aarch64-apple-darwin/loro.dylib --library" />
 
     <ItemGroup>
       <!-- ensure the loro.cs file is included - even when it was just created by the cargo build
