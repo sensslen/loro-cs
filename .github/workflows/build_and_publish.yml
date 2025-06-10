@@ -92,6 +92,8 @@ jobs:
     name: Pack and publish to NuGet
     needs: build-matrix
     runs-on: ubuntu-latest
+    outputs:
+      is_beta_version: ${{ steps.version.outputs.is_stable != 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -100,17 +102,51 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - uses: paulhatch/semantic-version@v5.4.0
-        id: version
+      - uses: nowsprinting/check-version-format-action@v3
+        id: tag_version
         with:
-          tag_prefix: 'v'
-          version_format: "${major}.${minor}.${patch}-beta.${increment}"
+          prefix: 'v'
+
+      - name: Generate beta version if no tag version found
+        id: gen_beta_version
+        if: ${{ steps.tag_version.outputs.is_valid != 'true' }}
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          tag_prefix: "v"
+          version_format: "${major}.${minor}.${patch}-alpha.${increment}"
+
+      - name: Set version output
+        id: version
+        run: |
+          if [ -z "${{ steps.tag_version.outputs.full_without_prefix }}" ]; then
+            echo "full_without_prefix=${{ steps.gen_beta_version.outputs.version }}" >> $GITHUB_OUTPUT
+          else
+            echo "full_without_prefix=${{ steps.tag_version.outputs.full_without_prefix }}" >> $GITHUB_OUTPUT
+          fi
       - name: build
         run: |
-          dotnet publish LoroCs/LoroCs/LoroCs.csproj -c Release -p:Version=${{ steps.version.outputs.version  }}
+          dotnet publish LoroCs/LoroCs/LoroCs.csproj -c Release -p:Version=${{ steps.version.outputs.full_without_prefix }}
       - name: Pack NuGet
         run: |
-          dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ steps.version.outputs.version  }}
+          dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ steps.version.outputs.full_without_prefix }}
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-package
+          path: out/*.nupkg
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/')
+    name: Release
+    needs: pack-nuget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download NuGet package
+        uses: actions/download-artifact@v4
+        with:
+          name: nuget-package
+          path: out
       - name: Zip artifacts
         uses: thedoctor0/zip-release@0.7.6
         with:
@@ -119,15 +155,13 @@ jobs:
           path: out
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main'
         with:
           generate_release_notes: true
-          prerelease: ${{ steps.version.outputs.is_tagged == false }}
           fail_on_unmatched_files: true
+          prerelease: ${{ needs.pack-nuget.outputs.is_beta_version }}
           files: |
             release.zip
       - name: publish nuget package to nuget.org
-        if: github.ref == 'refs/heads/main'
         id: publish_nuget
         shell: pwsh
         run: |
