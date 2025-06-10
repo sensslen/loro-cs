@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build-matrix:
@@ -114,6 +116,7 @@ jobs:
           path: out
       - name: Release
         uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
         with:
           generate_release_notes: true
           prerelease: ${{ steps.version.outputs.is_stable == false }}
@@ -121,6 +124,7 @@ jobs:
           files: |
             release.zip
       - name: publish nuget package to nuget.org
+        if: github.ref == 'refs/heads/main'
         id: publish_nuget
         shell: pwsh
         run: |
