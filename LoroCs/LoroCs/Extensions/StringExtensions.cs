@@ -2,10 +2,11 @@
 
 public static class StringExtensions
 {
-    public static LoroValueLike ToLoroValueLike(this LoroValue value) => new ValueLike(value);
+    public static ContainerIdLike ToLoroContainerIdLike(this string value) =>
+        new InternalContainerId(value);
 
-    private sealed class ValueLike(LoroValue value) : LoroValueLike
+    private sealed class InternalContainerId(string id) : ContainerIdLike
     {
-        public LoroValue AsLoroValue() => value;
+        public ContainerId AsContainerId(ContainerType ty) => new ContainerId.Root(id, ty);
     }
 }
