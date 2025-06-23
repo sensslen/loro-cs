@@ -1,6 +1,4 @@
-﻿using uniffi.loro;
-
-namespace LoroCs.Extensions;
+﻿namespace LoroCs.Extensions;
 
 public static class StringExtensions
 {
