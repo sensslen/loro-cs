@@ -75,10 +75,10 @@
       <!-- macOS -->
       <_UniffiLibPath Condition=" $(_IsMac) == 'true' and $(_IsX64) == 'true' and Exists('..\..\artifacts\loro-cs-x86_64-apple-darwin\loro.dylib') ">../artifacts/loro-cs-x86_64-apple-darwin/loro.dylib</_UniffiLibPath>
       <_UniffiLibPath Condition=" $(_IsMac) == 'true' and $(_IsArm64) == 'true' and Exists('..\..\artifacts\loro-cs-aarch64-apple-darwin\loro.dylib') ">../artifacts/loro-cs-aarch64-apple-darwin/loro.dylib</_UniffiLibPath>
-    </PropertyGroup>
 
+      <AbsoluteIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(IntermediateOutputPath)'))</AbsoluteIntermediateOutputPath>	</PropertyGroup>
     <Message Condition=" '$(_UniffiLibPath)' != '' " Text="Running uniffi-bindgen-cs for $(_UniffiLibPath)" />
-    <Exec WorkingDirectory="../../loro-cs" Condition=" '$(_UniffiLibPath)' != '' " Command="uniffi-bindgen-cs -o $(MSBuildProjectDirectory)\$(IntermediateOutputPath)loro --no-format -c uniffi.toml --library $(_UniffiLibPath)" />
+    <Exec WorkingDirectory="../../loro-cs" Condition=" '$(_UniffiLibPath)' != '' " Command="uniffi-bindgen-cs -o $(AbsoluteIntermediateOutputPath)loro --no-format -c uniffi.toml --library $(_UniffiLibPath)" />
 
     <Message Condition=" '$(_UniffiLibPath)' == '' " Importance="high" Text="WARNING: No matching platform/artifact found for uniffi-bindgen-cs. No bindings will be generated. IsWindows:$(_IsWindows) IsMac:$(_IsMac) IsLinux:$(_IsLinux) IsX64:$(_IsX64) IsX86:$(_IsX86) IsArm64:$(_IsArm64)" />
 
