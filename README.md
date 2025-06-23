@@ -2,6 +2,8 @@
 
 C# bindings for the [loro](https://github.com/loro-dev/loro) CRDT library.
 
+> **Note:** The current bindings are very bare bones. We are happy to accept pull requests that help make the loro API more accessible and idiomatic for C# developers!
+
 ## Overview
 This project provides .NET (C#) bindings for the loro CRDT library, enabling cross-platform, high-performance collaborative data structures in .NET applications. It uses Rust for the core implementation and exposes a C#-friendly API via native interop.
 
@@ -26,10 +28,11 @@ dotnet add package LoroCs
 ### Usage Example
 ```csharp
 using LoroCs;
+using LoroCs.Extensions;
 
 // Example usage (API subject to change)
-var doc = new LoroDocument();
-doc.Insert("Hello, world!");
+var doc = new LoroDoc();
+doc.GetMap("root".ToLoroContainerIdLike());
 ```
 
 ## Building from Source
