@@ -1,6 +1,6 @@
 [package]
 name = "loro"
-version = "1.5.8"
+version = "1.5.9"
 edition = "2021"
 
 [lib]
@@ -8,11 +8,7 @@ crate-type = ["dylib"]
 name = "loro"
 
 [dependencies]
-loro-ffi = { git = "https://github.com/sensslen/loro-ffi.git", rev = "fdb33599e251303e6c9d22ba157113e5ea5b741d" }
-uniffi = "0.28.3"
-
-[build-dependencies]
-uniffi = { version = "0.28.3", features = ["build"] }
+loro-ffi = "1.5.9"
 
 [bindings.csharp]
 namespace = "LoroCs"
