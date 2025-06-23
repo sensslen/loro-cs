@@ -601,17 +601,16 @@ dependencies = [
 
 [[package]]
 name = "loro"
-version = "1.5.8"
+version = "1.5.9"
 dependencies = [
  "loro-ffi",
- "uniffi",
 ]
 
 [[package]]
 name = "loro"
-version = "1.5.8"
+version = "1.5.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a861e6a012edc8deb08a8d09c4d9eb78e5523011f2f2ab7bf878bcacd8debbfd"
+checksum = "053d0eb248ff645aeba2b3d88ca5bca4404ae1be4f7819185e21d1762682440f"
 dependencies = [
  "enum-as-inner 0.6.1",
  "fxhash",
@@ -655,10 +654,11 @@ dependencies = [
 
 [[package]]
 name = "loro-ffi"
-version = "1.5.8"
-source = "git+https://github.com/sensslen/loro-ffi.git?rev=fdb33599e251303e6c9d22ba157113e5ea5b741d#fdb33599e251303e6c9d22ba157113e5ea5b741d"
+version = "1.5.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a0d35f3cd147018877a374edac0f57725aaa29db25adb65de3729c7b69ced863"
 dependencies = [
- "loro 1.5.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "loro 1.5.9 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json",
  "uniffi",
 ]
