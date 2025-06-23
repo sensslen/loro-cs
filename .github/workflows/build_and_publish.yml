@@ -95,7 +95,7 @@ jobs:
     needs: build-matrix
     runs-on: ubuntu-latest
     outputs:
-      is_beta_version: ${{ steps.version.outputs.is_stable != 'true' }}
+      is_beta_version: ${{ steps.tag_version.outputs.is_stable != 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
