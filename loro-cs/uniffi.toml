@@ -1,4 +1,3 @@
 [bindings.csharp]
 namespace = "LoroCs"
-cdylib_name = "loro_cs"
 access_modifier = "public"
