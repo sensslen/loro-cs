@@ -8,7 +8,7 @@ crate-type = ["dylib"]
 name = "loro"
 
 [dependencies]
-loro-ffi = "1.5.9"
+loro-ffi = "1.5.10"
 
 [bindings.csharp]
 namespace = "LoroCs"
