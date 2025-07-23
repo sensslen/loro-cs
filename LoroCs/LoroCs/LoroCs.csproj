@@ -41,7 +41,7 @@
 
   <Target Name="BuildLoroBindings" BeforeTargets="PreBuildEvent">
     <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
-    <Exec Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\(https://github.com/sensslen/uniffi-bindgen-cs\?rev=fda4ade54f801e437d944b1c6fc03fdba0008bde#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
+    <Exec Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\(https://github.com/NordSecurity/uniffi-bindgen-cs\?rev=fda4ade54f801e437d944b1c6fc03fdba0008bde#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
