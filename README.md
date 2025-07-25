@@ -1,4 +1,4 @@
-# loro-cs [![NuGet](https://img.shields.io/nuget/v/loro-cs.svg)](https://www.nuget.org/packages/loro-cs)
+# loro-cs [![NuGet](https://img.shields.io/nuget/v/LoroCs.svg)](https://www.nuget.org/packages/LoroCs)
 
 C# bindings for the [loro](https://github.com/loro-dev/loro) CRDT library.
 
