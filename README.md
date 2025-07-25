@@ -1,4 +1,4 @@
-# loro-cs [![Tests](https://github.com/sensslen/loro-cs/actions/workflows/action.yml/badge.svg)](https://github.com/sensslen/loro-cs/actions/workflows/action.yml) [![NuGet](https://img.shields.io/nuget/v/loro-cs.svg)](https://www.nuget.org/packages/loro-cs)
+# loro-cs [![NuGet](https://img.shields.io/nuget/v/loro-cs.svg)](https://www.nuget.org/packages/loro-cs)
 
 C# bindings for the [loro](https://github.com/loro-dev/loro) CRDT library.
 
