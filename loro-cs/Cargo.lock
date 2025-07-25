@@ -601,13 +601,6 @@ dependencies = [
 
 [[package]]
 name = "loro"
-version = "1.5.9"
-dependencies = [
- "loro-ffi",
-]
-
-[[package]]
-name = "loro"
 version = "1.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c80ff1e46afaf129b05e1ffb11651007ce0a442f02a30c1cc539dc5dbbf905a3"
@@ -620,6 +613,13 @@ dependencies = [
  "loro-internal",
  "loro-kv-store",
  "tracing",
+]
+
+[[package]]
+name = "loro"
+version = "1.5.11"
+dependencies = [
+ "loro-ffi",
 ]
 
 [[package]]
