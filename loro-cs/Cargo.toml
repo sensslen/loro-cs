@@ -1,6 +1,6 @@
 [package]
 name = "loro"
-version = "1.5.9"
+version = "1.5.11"
 edition = "2021"
 
 [lib]
@@ -8,8 +8,4 @@ crate-type = ["dylib"]
 name = "loro"
 
 [dependencies]
-loro-ffi = "1.5.10"
-
-[bindings.csharp]
-namespace = "LoroCs"
-access_modifier = "public"
+loro-ffi = "1.5.11"
