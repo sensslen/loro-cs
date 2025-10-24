@@ -119,7 +119,7 @@ jobs:
           echo "Listing files in loro-cs/target:"
           ls -R loro-cs/target || true
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: loro-cs-${{ matrix.target }}
           path: |
@@ -140,7 +140,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download all artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           path: artifacts
 
@@ -151,7 +151,7 @@ jobs:
         run: |
           dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ needs.generate-version-number.outputs.full_without_prefix }}
       - name: Upload NuGet package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: nuget-package
           path: out/*.nupkg
@@ -166,7 +166,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Download NuGet package
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: nuget-package
           path: out
