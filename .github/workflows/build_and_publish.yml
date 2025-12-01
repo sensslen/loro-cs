@@ -145,9 +145,11 @@ jobs:
           path: artifacts
 
       - name: build
+        shell: pwsh
         run: |
           dotnet publish LoroCs/LoroCs/LoroCs.csproj -c Release -p:Version=${{ needs.generate-version-number.outputs.full_without_prefix }}
       - name: Pack NuGet
+        shell: pwsh
         run: |
           dotnet pack LoroCs/LoroCs/LoroCs.csproj -c Release --no-build -o out -p:Version=${{ needs.generate-version-number.outputs.full_without_prefix }}
       - name: Upload NuGet package

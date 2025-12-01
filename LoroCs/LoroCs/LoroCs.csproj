@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <LangVersion>Latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
@@ -41,7 +42,14 @@
 
   <Target Name="BuildLoroBindings" BeforeTargets="PreBuildEvent">
     <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
-    <Exec Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\(https://github.com/NordSecurity/uniffi-bindgen-cs\?rev=fda4ade54f801e437d944b1c6fc03fdba0008bde#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
+
+    <!-- Windows: use PowerShell to inspect cargo install list output -->
+    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\(https://github.com/NordSecurity/uniffi-bindgen-cs\?rev=fda4ade54f801e437d944b1c6fc03fdba0008bde#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
+      <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
+    </Exec>
+
+    <!-- Non-Windows: use sh with grep to inspect cargo install list output -->
+    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c 'if cargo install --list | grep -F -q fda4ade54f801e437d944b1c6fc03fdba0008bde; then exit 0; else exit 1; fi'" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
