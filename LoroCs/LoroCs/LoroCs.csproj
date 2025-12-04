@@ -35,6 +35,11 @@
     <UpToDateCheckInput Include="@(RustFiles)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Add the generated Loro.cs file to the project if it is available. This eases development -->
+    <Compile Include="$(IntermediateOutputPath)/loro/loro*.cs" Link="generated/%(Filename)%(Extension)" />
+  </ItemGroup>
+
   <Target Name="BuildLoroBindings" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild" 
           Inputs="@(RustFiles);$(MSBuildProjectFile)" 
           Outputs="$(IntermediateOutputPath)loro/loro.cs">
