@@ -39,7 +39,7 @@
     <GeneratedLoroBindingsPath>$(IntermediateOutputPath)loro/loro.cs</GeneratedLoroBindingsPath>
   </PropertyGroup>
 
-  <Target Name="BuildLoroBindings" BeforeTargets="BeforeBuild;CoreCompile" Outputs="$(GeneratedLoroBindingsPath)">
+  <Target Name="BuildLoroBindings" BeforeTargets="BeforeBuild" Outputs="$(GeneratedLoroBindingsPath)">
     <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
