@@ -35,12 +35,7 @@
     <UpToDateCheckInput Include="@(RustFiles)" />
   </ItemGroup>
 
-  <ItemGroup>
-    <!-- Add the generated Loro.cs file to the project if it is available. This eases development -->
-    <Compile Include="$(IntermediateOutputPath)/loro/loro*.cs" Link="generated/%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <Target Name="BuildLoroBindings" BeforeTargets="PreBuildEvent">
+  <Target Name="BuildLoroBindings" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild">
     <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
@@ -91,10 +86,8 @@
     <Message Condition=" '$(_UniffiLibPath)' == '' " Importance="high" Text="WARNING: No matching platform/artifact found for uniffi-bindgen-cs. No bindings will be generated. IsWindows:$(_IsWindows) IsMac:$(_IsMac) IsLinux:$(_IsLinux) IsX64:$(_IsX64) IsX86:$(_IsX86) IsArm64:$(_IsArm64)" />
 
     <ItemGroup>
-      <!-- ensure the loro.cs file is included - even when it was just created by the cargo build
-      above and avoid double entries -->
-      <Compile Remove="$(IntermediateOutputPath)/loro/loro*.cs" />
-      <Compile Include="$(IntermediateOutputPath)/loro/loro.cs" Link="generated/%(Filename)%(Extension)" />
+      <!-- Add the generated loro.cs file to Compile items -->
+      <Compile Include="$(IntermediateOutputPath)/loro/loro.cs" Link="generated/%(Filename)%(Extension)" Condition="Exists('$(IntermediateOutputPath)/loro/loro.cs')" />
     </ItemGroup>
   </Target>
 
