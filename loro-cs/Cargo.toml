@@ -8,4 +8,4 @@ crate-type = ["dylib"]
 name = "loro"
 
 [dependencies]
-loro-ffi = "1.10.3"
+loro-ffi = { git = "https://github.com/sensslen/loro-ffi.git" }
