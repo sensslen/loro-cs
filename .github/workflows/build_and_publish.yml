@@ -28,7 +28,7 @@ jobs:
       - name: Generate beta version if no tag version found
         id: gen_beta_version
         if: ${{ steps.tag_version.outputs.is_valid != 'true' }}
-        uses: paulhatch/semantic-version@v6.0.0
+        uses: paulhatch/semantic-version@v6.0.1
         with:
           tag_prefix: "v"
           version_format: "${major}.${minor}.${patch}-alpha.${increment}"
