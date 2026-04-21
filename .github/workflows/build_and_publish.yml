@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: nowsprinting/check-version-format-action@v3
+      - uses: nowsprinting/check-version-format-action@v5.0.1
         id: tag_version
         with:
           prefix: 'v'
