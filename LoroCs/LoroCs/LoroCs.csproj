@@ -41,7 +41,9 @@
   </ItemGroup>
 
   <Target Name="BuildLoroBindings" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild" Inputs="@(RustFiles);$(MSBuildProjectFile)" Outputs="$(IntermediateOutputPath)loro/loro.cs">
-    <Message Importance="high" Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
+    <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
+
+    <!-- Temporary fork pin: jmbryan4/uniffi-bindgen-cs@89a344c6 includes pending NordSecurity/uniffi-bindgen-cs PRs #160/#161/#163 for uniffi-rs 0.31.0 support (upstream currently tracks 0.28.3). Revert check/install commands back to NordSecurity/uniffi-bindgen-cs once those PRs merge; keep --rev pinned only until then. -->
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
     <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\(https://github.com/jmbryan4/uniffi-bindgen-cs\?rev=89a344c6e531ba399080a41ceb511aba359f367a#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
