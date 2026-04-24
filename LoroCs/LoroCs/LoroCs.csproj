@@ -43,21 +43,25 @@
   <Target Name="BuildLoroBindings" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild" Inputs="@(RustFiles);$(MSBuildProjectFile)" Outputs="$(IntermediateOutputPath)loro/loro.cs">
     <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
 
-    <!-- Temporary fork pin: jmbryan4/uniffi-bindgen-cs@89a344c6 includes pending NordSecurity/uniffi-bindgen-cs PRs #160/#161/#163 for uniffi-rs 0.31.0 support (upstream currently tracks 0.28.3). Revert check/install commands back to NordSecurity/uniffi-bindgen-cs once those PRs merge; keep --rev pinned only until then. -->
+    <!-- Pin the bindgen tool to a specific commit so all machines use the same generator. -->
+    <PropertyGroup>
+      <_UniffiBindgenGitUrl>https://github.com/NordSecurity/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
+      <_UniffiBindgenRev>fda4ade54f801e437d944b1c6fc03fdba0008bde</_UniffiBindgenRev>
+    </PropertyGroup>
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
-    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\(https://github.com/jmbryan4/uniffi-bindgen-cs\?rev=89a344c6e531ba399080a41ceb511aba359f367a#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
+    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\($(_UniffiBindgenGitUrl)\?rev=$(_UniffiBindgenRev)#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
     <!-- Non-Windows: use sh with grep to inspect cargo install list output -->
-    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c &quot;if cargo install --list | grep -F 'uniffi-bindgen-cs' | grep -F -q 'https://github.com/jmbryan4/uniffi-bindgen-cs?rev=89a344c6e531ba399080a41ceb511aba359f367a#'; then exit 0; else exit 1; fi&quot;" IgnoreExitCode="true">
+    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c 'if cargo install --list | grep -F -q $(_UniffiBindgenRev); then exit 0; else exit 1; fi'" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
     <Message Condition="'$(UniffiInstalled)' != '0'" Text="Installing uniffi-bindgen-cs as it appears not to be installed in the correct version yet" />
     <Message Condition="'$(UniffiInstalled)' == '0'" Text="uniffi-bindgen-cs is already installed in the correct version - no need to install" />
-    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo install --git https://github.com/jmbryan4/uniffi-bindgen-cs --rev 89a344c6e531ba399080a41ceb511aba359f367a" />
+    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo install --git $(_UniffiBindgenGitUrl) --rev $(_UniffiBindgenRev)" />
 
     <!-- Detect platform and architecture to select the correct native library for uniffi-bindgen-cs -->
     <PropertyGroup>
