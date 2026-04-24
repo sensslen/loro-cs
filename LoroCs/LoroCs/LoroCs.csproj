@@ -45,8 +45,8 @@
 
     <!-- Pin the bindgen tool to a specific commit so all machines use the same generator. -->
     <PropertyGroup>
-      <_UniffiBindgenGitUrl>https://github.com/NordSecurity/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
-      <_UniffiBindgenRev>fda4ade54f801e437d944b1c6fc03fdba0008bde</_UniffiBindgenRev>
+      <_UniffiBindgenGitUrl>https://github.com/sensslen/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
+      <_UniffiBindgenRev>4e1de2e67967e2b90746606f3cc56eb40e70e252</_UniffiBindgenRev>
     </PropertyGroup>
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
