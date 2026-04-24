@@ -55,7 +55,7 @@
     </Exec>
 
     <!-- Non-Windows: use sh with grep to inspect cargo install list output -->
-    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c 'if cargo install --list | grep -F -q $(_UniffiBindgenRev); then exit 0; else exit 1; fi'" IgnoreExitCode="true">
+    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c &quot;if cargo install --list | grep -F -q '$(_UniffiBindgenGitUrl)?rev=$(_UniffiBindgenRev)#'; then exit 0; else exit 1; fi&quot;" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
