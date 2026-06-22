@@ -12,6 +12,9 @@ on:
 jobs:
   generate-version-number:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     outputs:
       full_without_prefix: ${{ steps.version.outputs.full_without_prefix }}
       is_beta_version: ${{ steps.tag_version.outputs.is_stable != 'true' }}
@@ -186,6 +189,11 @@ jobs:
           prerelease: ${{ needs.generate-version-number.outputs.is_beta_version }}
           files: |
             release.zip
+      - name: NuGet Login (OIDC)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: sensslen
       - name: publish nuget package to nuget.org
         id: publish_nuget
         shell: pwsh
@@ -194,5 +202,5 @@ jobs:
           foreach ($f in $files){
             $fullPath = $F.FullName
             echo "sending $fullPath"
-            dotnet nuget push "$fullPath" -s 'https://api.nuget.org/v3/index.json' -k ${{ secrets.NUGET_KEY }} --skip-duplicate
+            dotnet nuget push "$fullPath" -s 'https://api.nuget.org/v3/index.json' -k ${{ steps.login.outputs.NUGET_API_KEY }} --skip-duplicate
           }
