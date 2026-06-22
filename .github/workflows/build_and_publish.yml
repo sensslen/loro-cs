@@ -12,9 +12,6 @@ on:
 jobs:
   generate-version-number:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
     outputs:
       full_without_prefix: ${{ steps.version.outputs.full_without_prefix }}
       is_beta_version: ${{ steps.tag_version.outputs.is_stable != 'true' }}
@@ -168,6 +165,9 @@ jobs:
       - pack-nuget
       - generate-version-number
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - uses: actions/checkout@v7
       - name: Download NuGet package
