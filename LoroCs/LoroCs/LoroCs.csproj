@@ -50,7 +50,7 @@
     </PropertyGroup>
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
-    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\($(_UniffiBindgenGitUrl)\?tag=$(_UniffiBindgenTag)#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
+    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String -SimpleMatch '$(_UniffiBindgenGitUrl)?tag=$(_UniffiBindgenTag)#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
