@@ -43,25 +43,25 @@
   <Target Name="BuildLoroBindings" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild" Inputs="@(RustFiles);$(MSBuildProjectFile)" Outputs="$(IntermediateOutputPath)loro/loro.cs">
     <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
 
-    <!-- Pin the bindgen tool to a specific commit so all machines use the same generator. -->
+    <!-- Pin the bindgen tool to a specific tag so all machines use the same generator. -->
     <PropertyGroup>
-      <_UniffiBindgenGitUrl>https://github.com/sensslen/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
-      <_UniffiBindgenRev>0.11.0+v0.31.0</_UniffiBindgenRev>
+      <_UniffiBindgenGitUrl>https://github.com/NordSecurity/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
+      <_UniffiBindgenTag>v0.11.0+v0.31.0</_UniffiBindgenTag>
     </PropertyGroup>
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
-    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String 'uniffi-bindgen-cs.*\($(_UniffiBindgenGitUrl)\?rev=$(_UniffiBindgenRev)#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
+    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String -SimpleMatch '$(_UniffiBindgenGitUrl)?tag=$(_UniffiBindgenTag)#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
     <!-- Non-Windows: use sh with grep to inspect cargo install list output -->
-    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c &quot;if cargo install --list | grep -F -q '$(_UniffiBindgenGitUrl)?rev=$(_UniffiBindgenRev)#'; then exit 0; else exit 1; fi&quot;" IgnoreExitCode="true">
+    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c &quot;if cargo install --list | grep -F -q '$(_UniffiBindgenGitUrl)?tag=$(_UniffiBindgenTag)#'; then exit 0; else exit 1; fi&quot;" IgnoreExitCode="true">
       <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
     </Exec>
 
     <Message Condition="'$(UniffiInstalled)' != '0'" Text="Installing uniffi-bindgen-cs as it appears not to be installed in the correct version yet" />
     <Message Condition="'$(UniffiInstalled)' == '0'" Text="uniffi-bindgen-cs is already installed in the correct version - no need to install" />
-    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo install --git $(_UniffiBindgenGitUrl) --rev $(_UniffiBindgenRev)" />
+    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo install --git $(_UniffiBindgenGitUrl) --tag $(_UniffiBindgenTag)" />
 
     <!-- Detect platform and architecture to select the correct native library for uniffi-bindgen-cs -->
     <PropertyGroup>
