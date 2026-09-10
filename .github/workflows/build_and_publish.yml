@@ -97,7 +97,7 @@ jobs:
       - name: Add target
         run: rustup target add ${{ matrix.target }}
       - name: install cargo-edit
-        run: cargo install cargo-edit
+        run: cargo install cargo-edit --locked
       - name: set version number
         run: |
           cd loro-cs
@@ -105,7 +105,7 @@ jobs:
       - name: build native dependency
         run: |
           cd loro-cs
-          cargo build --release --target ${{ matrix.target }}
+          cargo build --release --locked --target ${{ matrix.target }}
       - name: List files in target directory
         shell: bash
         run: |
