@@ -47,7 +47,9 @@
     <PropertyGroup>
       <_UniffiBindgenGitUrl>https://github.com/NordSecurity/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
       <_UniffiBindgenTag>v0.11.0+v0.31.0</_UniffiBindgenTag>
-      <_UniffiBindgenRustChannel>1.88</_UniffiBindgenRustChannel>
+      <!-- Naming a channel explicitly is what suppresses rustup's implicit-override warning, which
+           Exec re-logs as an MSBuild warning in consumers that carry their own rust-toolchain.toml. -->
+      <_UniffiBindgenRustChannel>stable</_UniffiBindgenRustChannel>
     </PropertyGroup>
 
     <!-- Windows: use PowerShell to inspect cargo install list output -->
@@ -62,7 +64,9 @@
 
     <Message Condition="'$(UniffiInstalled)' != '0'" Text="Installing uniffi-bindgen-cs as it appears not to be installed in the correct version yet" />
     <Message Condition="'$(UniffiInstalled)' == '0'" Text="uniffi-bindgen-cs is already installed in the correct version - no need to install" />
-    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo +$(_UniffiBindgenRustChannel) install --git $(_UniffiBindgenGitUrl) --tag $(_UniffiBindgenTag)" />
+    <!-- Installing locked builds the tag's own dependency set. Re-resolving lets an unrelated crate's
+         release change what a pinned tag compiles, so the generator breaks with no change on our side. -->
+    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo +$(_UniffiBindgenRustChannel) install --locked --git $(_UniffiBindgenGitUrl) --tag $(_UniffiBindgenTag)" />
 
     <!-- Detect platform and architecture to select the correct native library for uniffi-bindgen-cs -->
     <PropertyGroup>
