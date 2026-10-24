@@ -8,4 +8,4 @@ crate-type = ["dylib"]
 name = "loro"
 
 [dependencies]
-loro-ffi = "=1.16.2"
+loro-ffi = "=1.17.1"
