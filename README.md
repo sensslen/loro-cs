@@ -37,43 +37,31 @@ doc.GetMap("root".ToLoroContainerIdLike());
 
 ## Building from Source
 
-### Rust Native Library
-The native library is built using Rust and UniFFI. To build native artifacts and copy them for the C# project:
+### Prerequisites
+- Rust (stable) and the .NET SDK
+- PowerShell 7 (`pwsh`), which also runs on Linux and macOS
 
-#### Windows (PowerShell/x64)
-```powershell
-pushd .\loro-cs
-cargo build --release
-Copy-Item .\target\release\loro_cs.dll ..\LoroCs\LoroCs\..\..\artifacts\loro_cs-win-x64\loro_cs.dll -Force
+### Bindings
+Generate the C# bindings once, and again whenever `loro-ffi` changes:
+
+```
+pwsh scripts/generate-bindings.ps1
 ```
 
-#### Linux (bash/x64)
-```bash
-pushd ./loro-cs
-cargo build --release
-mkdir -p ../../artifacts/loro_cs-linux-x64-ubuntu-latest
-cp ./target/release/loro_cs.so ../../artifacts/loro_cs-linux-x64/loro_cs.so
-```
-
-#### macOS (bash/arm64)
-```bash
-pushd ./loro-cs
-cargo build --release
-mkdir -p ../../artifacts/loro_cs-osx-arm64-macos-latest
-cp ./target/release/loro_cs.dylib ../../artifacts/loro_cs-osx-arm64/loro_cs.dylib
-```
+The script installs the pinned `uniffi-bindgen-cs`, builds the native library for your machine and writes `LoroCs/LoroCs/Generated/loro.cs`. The generated file is not committed.
 
 ### C# Project
-Build the C# project and pack the NuGet package:
+`dotnet build LoroCs/LoroCs.slnx` compiles the library and also writes the NuGet package. The package contains every native library found under `artifacts/runtimes/<rid>/native/`. CI fills that folder for all platforms. To include your local build, copy it there, for example:
 
+```powershell
+New-Item -ItemType Directory -Force artifacts/runtimes/win-x64/native
+Copy-Item loro-cs/target/release/loro.dll artifacts/runtimes/win-x64/native/
 ```
-dotnet build
-# or to create a NuGet package:
-dotnet pack
-```
+
+On Linux and macOS Cargo names the file `libloro.so` or `libloro.dylib`. Copy it without the `lib` prefix.
 
 ### Cross-Platform Builds
-Cross-platform native builds and NuGet packaging are automated via GitHub Actions. See `.github/workflows/release.yml` for details.
+Cross-platform native builds and NuGet packaging are automated via GitHub Actions. See `.github/workflows/build_and_publish.yml` for details.
 
 ## Contributing
 Contributions are welcome! Please open issues or pull requests.

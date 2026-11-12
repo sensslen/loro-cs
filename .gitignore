@@ -428,3 +428,6 @@ Cargo.toml.orig
 **/*.swp
 **/.cargo/
 **/.rustup/
+
+# Generated C# bindings, see scripts/generate-bindings.ps1
+LoroCs/LoroCs/Generated/
