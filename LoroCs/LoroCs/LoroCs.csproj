@@ -9,113 +9,16 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-    <RustBuildConfiguration>debug</RustBuildConfiguration>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <RustBuildConfiguration>release</RustBuildConfiguration>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="PolySharp" Version="1.17.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <AvailableItemName Include="RustFiles" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <RustFiles Include="..\..\loro\*" Link="loro-cs\%(RecursiveDir)%(Filename)%(Extension)" />
-    <RustFiles Include="..\..\loro\src\**" Link="loro-cs\src\%(RecursiveDir)%(Filename)%(Extension)" />
-    <UpToDateCheckInput Include="@(RustFiles)" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <!-- Add the generated Loro.cs file to the project if it is available. This eases development -->
-    <Compile Include="$(IntermediateOutputPath)/loro/loro*.cs" Link="generated/%(Filename)%(Extension)" />
-  </ItemGroup>
-
-  <Target Name="BuildLoroBindings" BeforeTargets="CoreCompile" DependsOnTargets="PrepareForBuild" Inputs="@(RustFiles);$(MSBuildProjectFile)" Outputs="$(IntermediateOutputPath)loro/loro.cs">
-    <Message Text="Checking whether uniffi-bindgen-cs is already installed in the correct version" />
-
-    <!-- Pin the bindgen tool to a specific tag so all machines use the same generator. -->
-    <PropertyGroup>
-      <_UniffiBindgenGitUrl>https://github.com/NordSecurity/uniffi-bindgen-cs</_UniffiBindgenGitUrl>
-      <_UniffiBindgenTag>v0.11.0+v0.31.0</_UniffiBindgenTag>
-      <!-- Naming a channel explicitly is what suppresses rustup's implicit-override warning, which
-           Exec re-logs as an MSBuild warning in consumers that carry their own rust-toolchain.toml. -->
-      <_UniffiBindgenRustChannel>stable</_UniffiBindgenRustChannel>
-    </PropertyGroup>
-
-    <!-- Windows: use PowerShell to inspect cargo install list output -->
-    <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))" Command="powershell -NoProfile -Command &quot;if (cargo install --list | Select-String -SimpleMatch '$(_UniffiBindgenGitUrl)?tag=$(_UniffiBindgenTag)#') { exit 0 } else { exit 1 }&quot;" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
-    </Exec>
-
-    <!-- Non-Windows: use sh with grep to inspect cargo install list output -->
-    <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))" Command="/bin/sh -c &quot;if cargo install --list | grep -F -q '$(_UniffiBindgenGitUrl)?tag=$(_UniffiBindgenTag)#'; then exit 0; else exit 1; fi&quot;" IgnoreExitCode="true">
-      <Output TaskParameter="ExitCode" PropertyName="UniffiInstalled" />
-    </Exec>
-
-    <Message Condition="'$(UniffiInstalled)' != '0'" Text="Installing uniffi-bindgen-cs as it appears not to be installed in the correct version yet" />
-    <Message Condition="'$(UniffiInstalled)' == '0'" Text="uniffi-bindgen-cs is already installed in the correct version - no need to install" />
-    <!-- Installing locked builds the tag's own dependency set. Re-resolving lets an unrelated crate's
-         release change what a pinned tag compiles, so the generator breaks with no change on our side. -->
-    <Exec Condition="'$(UniffiInstalled)' != '0'" Command="cargo +$(_UniffiBindgenRustChannel) install --locked --git $(_UniffiBindgenGitUrl) --tag $(_UniffiBindgenTag)" />
-
-    <!-- Detect platform and architecture to select the correct native library for uniffi-bindgen-cs -->
-    <PropertyGroup>
-      <!-- Platform detection -->
-      <_IsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</_IsWindows>
-      <_IsMac Condition="$([MSBuild]::IsOSPlatform('OSX'))">true</_IsMac>
-      <_IsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</_IsLinux>
-
-      <!-- Architecture detection -->
-      <_IsX64 Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X64' ">true</_IsX64>
-      <_IsX86 Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'X86' ">true</_IsX86>
-      <_IsArm64 Condition=" '$([System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture)' == 'Arm64' ">true</_IsArm64>
-
-      <!-- Set library path and type based on detected platform and architecture -->
-      <!-- Windows -->
-      <_UniffiLibPath Condition=" $(_IsWindows) == 'true' and $(_IsX64) == 'true' and Exists('..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro.dll') ">../artifacts/loro-cs-x86_64-pc-windows-msvc/loro.dll</_UniffiLibPath>
-      <_UniffiLibPath Condition=" $(_IsWindows) == 'true' and $(_IsX86) == 'true' and Exists('..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro.dll') ">../artifacts/loro-cs-i686-pc-windows-msvc/loro.dll</_UniffiLibPath>
-      <_UniffiLibPath Condition=" $(_IsWindows) == 'true' and $(_IsArm64) == 'true' and Exists('..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro.dll') ">../artifacts/loro-cs-aarch64-pc-windows-msvc/loro.dll</_UniffiLibPath>
-
-      <!-- Linux -->
-      <_UniffiLibPath Condition=" $(_IsLinux) == 'true' and $(_IsX64) == 'true' and Exists('..\..\artifacts\loro-cs-x86_64-unknown-linux-gnu\loro.so') ">../artifacts/loro-cs-x86_64-unknown-linux-gnu/loro.so</_UniffiLibPath>
-      <_UniffiLibPath Condition=" $(_IsLinux) == 'true' and $(_IsX86) == 'true' and Exists('..\..\artifacts\loro-cs-i686-unknown-linux-gnu\loro.so') ">../artifacts/loro-cs-i686-unknown-linux-gnu/loro.so</_UniffiLibPath>
-      <_UniffiLibPath Condition=" $(_IsLinux) == 'true' and $(_IsArm64) == 'true' and Exists('..\..\artifacts\loro-cs-aarch64-unknown-linux-gnu\loro.so') ">../artifacts/loro-cs-aarch64-unknown-linux-gnu/loro.so</_UniffiLibPath>
-
-      <!-- macOS -->
-      <_UniffiLibPath Condition=" $(_IsMac) == 'true' and $(_IsX64) == 'true' and Exists('..\..\artifacts\loro-cs-x86_64-apple-darwin\loro.dylib') ">../artifacts/loro-cs-x86_64-apple-darwin/loro.dylib</_UniffiLibPath>
-      <_UniffiLibPath Condition=" $(_IsMac) == 'true' and $(_IsArm64) == 'true' and Exists('..\..\artifacts\loro-cs-aarch64-apple-darwin\loro.dylib') ">../artifacts/loro-cs-aarch64-apple-darwin/loro.dylib</_UniffiLibPath>
-
-      <AbsoluteIntermediateOutputPath>$([System.IO.Path]::GetFullPath('$(IntermediateOutputPath)'))</AbsoluteIntermediateOutputPath>
-    </PropertyGroup>
-    <Message Condition=" '$(_UniffiLibPath)' != '' " Text="Running uniffi-bindgen-cs for $(_UniffiLibPath)" />
-    <Exec WorkingDirectory="../../loro-cs" Condition=" '$(_UniffiLibPath)' != '' " Command="uniffi-bindgen-cs -o $(AbsoluteIntermediateOutputPath)loro --no-format -c uniffi.toml --library $(_UniffiLibPath)" />
-
-    <Message Condition=" '$(_UniffiLibPath)' == '' " Importance="high" Text="WARNING: No matching platform/artifact found for uniffi-bindgen-cs. No bindings will be generated. IsWindows:$(_IsWindows) IsMac:$(_IsMac) IsLinux:$(_IsLinux) IsX64:$(_IsX64) IsX86:$(_IsX86) IsArm64:$(_IsArm64)" />
-  </Target>
-
-  <!-- Add the generated loro.cs file after the build target has run -->
-  <Target Name="AddLoroBindingsToCompile" BeforeTargets="CoreCompile" DependsOnTargets="BuildLoroBindings">
-    <PropertyGroup>
-      <_LoroBindingsPath>$(IntermediateOutputPath)loro/loro.cs</_LoroBindingsPath>
-    </PropertyGroup>
-    <ItemGroup Condition="Exists('$(_LoroBindingsPath)') and '@(Compile->'%(Identity)')' != '' ">
-      <!-- First remove all existing entries to ensure we don't have duplicates -->
-      <Compile Remove="$(_LoroBindingsPath)" />
-    </ItemGroup>
-    <ItemGroup Condition="Exists('$(_LoroBindingsPath)')">
-      <!-- Add the generated loro.cs file -->
-      <Compile Include="$(_LoroBindingsPath)" Link="generated/loro.cs" />
-    </ItemGroup>
+  <!-- scripts/generate-bindings.ps1 writes Generated/loro.cs; the SDK compiles it with the other sources. -->
+  <Target Name="RequireLoroBindings" BeforeTargets="CoreCompile">
+    <Error Condition="!Exists('$(MSBuildProjectDirectory)/Generated/loro.cs')" Text="Generated/loro.cs is missing. Run scripts/generate-bindings.ps1 first." />
   </Target>
 
   <PropertyGroup>
@@ -123,7 +26,7 @@
     <PackageId>LoroCs</PackageId>
     <Version>0.1.0</Version>
     <Authors>Simon Ensslen;RenewedVision</Authors>
-    <Description>LoroCs .NET bindings with native loro_cs.dll from Rust</Description>
+    <Description>LoroCs .NET bindings with the native loro library from Rust</Description>
     <IncludeSymbols>true</IncludeSymbols>
     <IncludeSource>true</IncludeSource>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -134,24 +37,11 @@
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
-  <!-- Include native dependencies when available (these are built by the CI pipeline) -->
+  <!-- CI stages each native library as artifacts/runtimes/<rid>/native/loro.* -->
   <ItemGroup>
-    <!-- Windows -->
-    <None Include="..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro.dll" Pack="true" PackagePath="runtimes/win-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro.dll')" />
-    <None Include="..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro.pdb" Pack="true" PackagePath="runtimes/win-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-pc-windows-msvc\loro.pdb')" />
-    <None Include="..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro.dll" Pack="true" PackagePath="runtimes/win-x86/native/" Condition="Exists('..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro.dll')" />
-    <None Include="..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro.pdb" Pack="true" PackagePath="runtimes/win-x86/native/" Condition="Exists('..\..\artifacts\loro-cs-i686-pc-windows-msvc\loro.pdb')" />
-    <None Include="..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro.dll" Pack="true" PackagePath="runtimes/win-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro.dll')" />
-    <None Include="..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro.pdb" Pack="true" PackagePath="runtimes/win-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-pc-windows-msvc\loro.pdb')" />
-    <!-- Linux -->
-    <None Include="..\..\artifacts\loro-cs-x86_64-unknown-linux-gnu\loro.so" Pack="true" PackagePath="runtimes/linux-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-unknown-linux-gnu\loro.so')" />
-    <None Include="..\..\artifacts\loro-cs-i686-unknown-linux-gnu\loro.so" Pack="true" PackagePath="runtimes/linux-x86/native/" Condition="Exists('..\..\artifacts\loro-cs-i686-unknown-linux-gnu\loro.so')" />
-    <None Include="..\..\artifacts\loro-cs-aarch64-unknown-linux-gnu\loro.so" Pack="true" PackagePath="runtimes/linux-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-unknown-linux-gnu\loro.so')" />
-    <!-- macOS -->
-    <None Include="..\..\artifacts\loro-cs-x86_64-apple-darwin\loro.dylib" Pack="true" PackagePath="runtimes/osx-x64/native/" Condition="Exists('..\..\artifacts\loro-cs-x86_64-apple-darwin\loro.dylib')" />
-    <None Include="..\..\artifacts\loro-cs-aarch64-apple-darwin\loro.dylib" Pack="true" PackagePath="runtimes/osx-arm64/native/" Condition="Exists('..\..\artifacts\loro-cs-aarch64-apple-darwin\loro.dylib')" />
-  </ItemGroup>  
-  
+    <None Include="..\..\artifacts\runtimes\**\*" Pack="true" PackagePath="runtimes" Visible="false" />
+  </ItemGroup>
+
   <ItemGroup>
     <Content Include="..\..\README.md">
       <Pack>true</Pack>

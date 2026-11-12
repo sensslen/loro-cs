@@ -3,5 +3,16 @@
   "extends": [
     "config:recommended"
   ],
-  "minimumReleaseAge": "48 hours"
+  "minimumReleaseAge": "48 hours",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "uniffi-bindgen-cs tag pinned in the bindings script",
+      "managerFilePatterns": ["/^scripts/generate-bindings\\.ps1$/"],
+      "matchStrings": ["\\$BindgenTag = '(?<currentValue>[^']+)'"],
+      "depNameTemplate": "NordSecurity/uniffi-bindgen-cs",
+      "datasourceTemplate": "github-tags",
+      "versioningTemplate": "regex:^v(?<major>\\d+)\\.(?<minor>\\d+)\\.(?<patch>\\d+)\\+v(?<compatibility>\\d+\\.\\d+)\\.\\d+$"
+    }
+  ]
 }

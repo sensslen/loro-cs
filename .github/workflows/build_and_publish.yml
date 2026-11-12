@@ -52,22 +52,30 @@ jobs:
           # Windows
           - os: windows-latest
             target: x86_64-pc-windows-msvc
+            rid: win-x64
           - os: windows-latest
             target: i686-pc-windows-msvc
+            rid: win-x86
           - os: windows-latest
             target: aarch64-pc-windows-msvc
+            rid: win-arm64
           # Linux
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
+            rid: linux-x64
           - os: ubuntu-latest
             target: i686-unknown-linux-gnu
+            rid: linux-x86
           - os: ubuntu-latest
             target: aarch64-unknown-linux-gnu
+            rid: linux-arm64
           # MacOS
           - os: macos-latest
             target: x86_64-apple-darwin
+            rid: osx-x64
           - os: macos-latest
             target: aarch64-apple-darwin
+            rid: osx-arm64
     steps:
       - uses: actions/checkout@v7
       - name: Install 32-bit dependencies (Linux only)
@@ -106,27 +114,24 @@ jobs:
         run: |
           cd loro-cs
           cargo build --release --locked --target ${{ matrix.target }}
-      - name: List files in target directory
+      - name: Stage native library by runtime identifier
         shell: bash
         run: |
-          echo "Renaming libloro.* to loro.* in loro-cs/target/${{ matrix.target }}/release"
-          shopt -s nullglob
-          for f in loro-cs/target/${{ matrix.target }}/release/libloro.*; do
-            newname="loro-cs/target/${{ matrix.target }}/release/$(basename "$f" | sed 's/^lib//')"
-            mv "$f" "$newname"
-            echo "Renamed $f to $newname"
+          src="loro-cs/target/${{ matrix.target }}/release"
+          dst="staging/runtimes/${{ matrix.rid }}/native"
+          mkdir -p "$dst"
+          # Cargo adds a lib prefix on Linux and macOS; the package ships every library as loro.*
+          for f in "$src"/loro.dll "$src"/loro.pdb "$src"/libloro.so "$src"/libloro.dylib; do
+            if [ -f "$f" ]; then
+              cp "$f" "$dst/$(basename "$f" | sed 's/^lib//')"
+            fi
           done
-          echo "Listing files in loro-cs/target:"
-          ls -R loro-cs/target || true
+          ls -R staging
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
           name: loro-cs-${{ matrix.target }}
-          path: |
-            loro-cs/target/${{ matrix.target }}/release/loro.dll
-            loro-cs/target/${{ matrix.target }}/release/loro.pdb
-            loro-cs/target/${{ matrix.target }}/release/loro.so
-            loro-cs/target/${{ matrix.target }}/release/loro.dylib
+          path: staging/
           if-no-files-found: error
 
   pack-nuget:
@@ -142,7 +147,13 @@ jobs:
       - name: Download all artifacts
         uses: actions/download-artifact@v8
         with:
+          pattern: loro-cs-*
           path: artifacts
+          merge-multiple: true
+
+      - name: Generate C# bindings
+        shell: pwsh
+        run: ./scripts/generate-bindings.ps1 -Library artifacts/runtimes/linux-x64/native/loro.so
 
       - name: build
         shell: pwsh
