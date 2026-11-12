@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: nowsprinting/check-version-format-action@v5.0.8
+      - uses: nowsprinting/check-version-format-action@v5.0.9
         id: tag_version
         with:
           prefix: 'v'
@@ -28,7 +28,7 @@ jobs:
       - name: Generate beta version if no tag version found
         id: gen_beta_version
         if: ${{ steps.tag_version.outputs.is_valid != 'true' }}
-        uses: paulhatch/semantic-version@v6.0.5
+        uses: paulhatch/semantic-version@v6.0.7
         with:
           tag_prefix: "v"
           version_format: "${major}.${minor}.${patch}-alpha.${increment}"
