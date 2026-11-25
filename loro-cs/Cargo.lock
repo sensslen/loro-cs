@@ -697,9 +697,9 @@ dependencies = [
 
 [[package]]
 name = "loro"
-version = "1.18.0"
+version = "1.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f310fb0c57a01a6de7e233926dbf19b25d49630b4f33b4ea55f47cfad825389c"
+checksum = "b586d4a540ccbb17d45125517ff83d738a561257b6b195353fd0b8b4bb190000"
 dependencies = [
  "bytes",
  "enum-as-inner 0.6.1",
@@ -714,9 +714,9 @@ dependencies = [
 
 [[package]]
 name = "loro-common"
-version = "1.18.0"
+version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bc76e378b98f08fd308eeff42461d60566053076f4884a881d3429a29081e0e"
+checksum = "059f7fe8069d29b4b490fa707769ffb7ff6c6bb4fcfb124a9e7c28f1abf99629"
 dependencies = [
  "arbitrary",
  "enum-as-inner 0.6.1",
@@ -733,9 +733,9 @@ dependencies = [
 
 [[package]]
 name = "loro-delta"
-version = "1.18.0"
+version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c36a724d99ddb1ec26036545db181c2b623c78d356385016a73f93e98c8d38d"
+checksum = "6145e8f26d6b3d8ff2f35799daca72645bff643abd13144fdd28990b75a61c1e"
 dependencies = [
  "arrayvec",
  "enum-as-inner 0.5.1",
@@ -745,20 +745,20 @@ dependencies = [
 
 [[package]]
 name = "loro-ffi"
-version = "1.18.0"
+version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5ccb2a8ef1b59909cfd4e9a5ccb648dc93f02bdb87fca38adbb03fb9a0cf79b0"
+checksum = "d1f915230ac5af2749c8d5006818be4734261a31a3547cbd7fc2681f6cb7216b"
 dependencies = [
- "loro 1.18.0",
+ "loro 1.19.1",
  "serde_json",
  "uniffi",
 ]
 
 [[package]]
 name = "loro-internal"
-version = "1.18.0"
+version = "1.19.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d55e9581255de97cf6e66fafff019f79fa0fb005fdb5197195bc6f5048381b74"
+checksum = "e9ebc2a8d21db73a1b13b618cd4409f0962116c724c360e5213ec2bb5cc45b08"
 dependencies = [
  "append-only-bytes",
  "arref",
@@ -803,9 +803,9 @@ dependencies = [
 
 [[package]]
 name = "loro-kv-store"
-version = "1.18.0"
+version = "1.19.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a169f32c2d2d6ffe67d03603b61bd17d8d90b1a7f8c2f2585304f3181be8089"
+checksum = "b2b2dfb97ef81bc4c1af522c7232d7543b339721e70b86d3bc7bd6e10357e6a7"
 dependencies = [
  "bytes",
  "ensure-cov",
